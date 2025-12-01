@@ -2,23 +2,26 @@ import '/components/navbar_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:customer_app_temp_7/features/auth/providers/auth_provider.dart';
 import 'more_page_model.dart';
 export 'more_page_model.dart';
 
-class MorePageWidget extends StatefulWidget {
+class MorePageWidget extends ConsumerStatefulWidget {
   const MorePageWidget({super.key});
 
   static String routeName = 'More_Page';
   static String routePath = '/morePage';
 
   @override
-  State<MorePageWidget> createState() => _MorePageWidgetState();
+  ConsumerState<MorePageWidget> createState() => _MorePageWidgetState();
 }
 
-class _MorePageWidgetState extends State<MorePageWidget> {
+class _MorePageWidgetState extends ConsumerState<MorePageWidget> {
   late MorePageModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -87,7 +90,8 @@ class _MorePageWidgetState extends State<MorePageWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(12.0, 16.0, 12.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(12.0, 16.0, 12.0, 0.0),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
@@ -134,7 +138,8 @@ class _MorePageWidgetState extends State<MorePageWidget> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: Align(
-                                    alignment: const AlignmentDirectional(0.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(0.0, 0.0),
                                     child: Icon(
                                       Icons.person,
                                       color: FlutterFlowTheme.of(context).info,
@@ -144,8 +149,9 @@ class _MorePageWidgetState extends State<MorePageWidget> {
                                 ),
                                 Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 0.0, 16.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16.0, 0.0, 16.0, 0.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       crossAxisAlignment:
@@ -264,7 +270,8 @@ class _MorePageWidgetState extends State<MorePageWidget> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: Align(
-                                    alignment: const AlignmentDirectional(0.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(0.0, 0.0),
                                     child: Icon(
                                       Icons.notifications,
                                       color: FlutterFlowTheme.of(context).info,
@@ -274,8 +281,9 @@ class _MorePageWidgetState extends State<MorePageWidget> {
                                 ),
                                 Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 0.0, 16.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16.0, 0.0, 16.0, 0.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       crossAxisAlignment:
@@ -394,7 +402,8 @@ class _MorePageWidgetState extends State<MorePageWidget> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: Align(
-                                    alignment: const AlignmentDirectional(0.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(0.0, 0.0),
                                     child: Icon(
                                       Icons.mail,
                                       color: FlutterFlowTheme.of(context).info,
@@ -404,8 +413,9 @@ class _MorePageWidgetState extends State<MorePageWidget> {
                                 ),
                                 Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 0.0, 16.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16.0, 0.0, 16.0, 0.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       crossAxisAlignment:
@@ -524,7 +534,8 @@ class _MorePageWidgetState extends State<MorePageWidget> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: Align(
-                                    alignment: const AlignmentDirectional(0.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(0.0, 0.0),
                                     child: Icon(
                                       Icons.info,
                                       color: FlutterFlowTheme.of(context).info,
@@ -534,8 +545,9 @@ class _MorePageWidgetState extends State<MorePageWidget> {
                                 ),
                                 Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 0.0, 16.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16.0, 0.0, 16.0, 0.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       crossAxisAlignment:
@@ -613,6 +625,8 @@ class _MorePageWidgetState extends State<MorePageWidget> {
                 ),
               ),
             ),
+            // Logout Button Section
+            _buildLogoutSection(),
             wrapWithModel(
               model: _model.navbarModel,
               updateCallback: () => safeSetState(() {}),
@@ -622,5 +636,93 @@ class _MorePageWidgetState extends State<MorePageWidget> {
         ),
       ),
     );
+  }
+
+  /// Build logout button section with divider
+  Widget _buildLogoutSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Divider(
+            height: 1.0,
+            thickness: 1.0,
+            color: FlutterFlowTheme.of(context).alternate,
+          ),
+          const SizedBox(height: 16),
+          FFButtonWidget(
+            onPressed: ref.watch(isAuthLoadingProvider) ? null : _handleLogout,
+            text:
+                ref.watch(isAuthLoadingProvider) ? 'Logging Out...' : 'Logout',
+            options: FFButtonOptions(
+              width: double.infinity,
+              height: 48.0,
+              padding: const EdgeInsets.all(0.0),
+              color: Colors.red.shade500,
+              textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                    color: Colors.white,
+                    letterSpacing: 0.0,
+                    fontWeight: FontWeight.w600,
+                  ),
+              elevation: 0.0,
+              borderSide: const BorderSide(
+                color: Colors.transparent,
+                width: 1.0,
+              ),
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Handle logout button press
+  Future<void> _handleLogout() async {
+    // Show confirmation dialog
+    final confirmed = await _showLogoutConfirmation();
+    if (!confirmed) return;
+
+    // Logout via auth provider
+    await ref.read(authProvider.notifier).logout();
+
+    if (!mounted) return;
+
+    // Clear error for fresh login
+    ref.read(authProvider.notifier).clearError();
+
+    // Navigate to login screen
+    context.goNamed(LoginWidget.routeName);
+  }
+
+  /// Show logout confirmation dialog
+  Future<bool> _showLogoutConfirmation() async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Logout'),
+            content: const Text('Are you sure you want to logout?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: FlutterFlowTheme.of(context).primary,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 }
