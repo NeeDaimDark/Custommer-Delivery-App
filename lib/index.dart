@@ -1,5 +1,6 @@
 // Export pages
 export '/splash/splash/splash_widget.dart' show SplashWidget;
+export '/features/auth/screens/register_screen.dart' show RegisterScreen;
 export '/onboardings/onboarding_4/onboarding4_widget.dart'
     show Onboarding4Widget;
 export '/auth/login/login_widget.dart' show LoginWidget;

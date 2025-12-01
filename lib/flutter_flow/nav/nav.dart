@@ -61,6 +61,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => const SignUpWidget(),
         ),
         FFRoute(
+          name: RegisterScreen.routeName,
+          path: RegisterScreen.routePath,
+          builder: (context, params) => const RegisterScreen(),
+        ),
+        FFRoute(
           name: OtpWidget.routeName,
           path: OtpWidget.routePath,
           builder: (context, params) => const OtpWidget(),
