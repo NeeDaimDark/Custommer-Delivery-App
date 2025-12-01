@@ -266,6 +266,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(error: null);
   }
 
+  /// Set error message
+  void setError(String message) {
+    state = state.copyWith(error: message);
+  }
+
   /// Get error message from exception
   String _getErrorMessage(dynamic error) {
     if (error is ApiException) {

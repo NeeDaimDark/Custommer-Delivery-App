@@ -6,20 +6,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:customer_app_temp_7/features/auth/providers/auth_provider.dart';
 import 'login_model.dart';
 export 'login_model.dart';
 
-class LoginWidget extends StatefulWidget {
+class LoginWidget extends ConsumerStatefulWidget {
   const LoginWidget({super.key});
 
   static String routeName = 'Login';
   static String routePath = '/login';
 
   @override
-  State<LoginWidget> createState() => _LoginWidgetState();
+  ConsumerState<LoginWidget> createState() => _LoginWidgetState();
 }
 
-class _LoginWidgetState extends State<LoginWidget> {
+class _LoginWidgetState extends ConsumerState<LoginWidget> {
   late LoginModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -27,20 +29,110 @@ class _LoginWidgetState extends State<LoginWidget> {
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => LoginModel());
+    _initializeFormControllers();
+    _clearErrorsOnPageLoad();
+    _setupErrorClearingListeners();
+  }
 
+  /// Initialize all form text controllers and focus nodes
+  void _initializeFormControllers() {
+    _model = createModel(context, () => LoginModel());
     _model.textController1 ??= TextEditingController();
     _model.textFieldFocusNode1 ??= FocusNode();
-
     _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
+  }
+
+  /// Clear errors when page loads for clean UX
+  void _clearErrorsOnPageLoad() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.read(authProvider.notifier).clearError();
+    });
+  }
+
+  /// Setup listeners to clear errors when user starts typing
+  void _setupErrorClearingListeners() {
+    _model.textController1?.addListener(_onInputFieldChanged);
+    _model.textController2?.addListener(_onInputFieldChanged);
+  }
+
+  /// Callback when user types in any input field
+  void _onInputFieldChanged() {
+    if (mounted) {
+      ref.read(authProvider.notifier).clearError();
+    }
   }
 
   @override
   void dispose() {
     _model.dispose();
-
     super.dispose();
+  }
+
+  /// Handle login button press - validates form and attempts login
+  Future<void> _handleLoginButtonPressed() async {
+    final email = _model.textController1?.text.trim();
+    final password = _model.textController2?.text;
+
+    // Validate form inputs
+    final validationError = _validateLoginInputs(email, password);
+    if (validationError != null) {
+      ref.read(authProvider.notifier).setError(validationError);
+      return;
+    }
+
+    // Attempt login via auth provider
+    final success = await ref.read(authProvider.notifier).login(
+          email: email!,
+          password: password!,
+        );
+
+    if (!mounted) return;
+
+    if (success) {
+      _showSuccessMessage();
+      _navigateToHome();
+    }
+  }
+
+  /// Validate login form inputs
+  /// Returns error message if validation fails, null if valid
+  String? _validateLoginInputs(String? email, String? password) {
+    if (email == null || email.isEmpty) {
+      return 'Email is required';
+    }
+    if (!_isValidEmail(email)) {
+      return 'Please enter a valid email';
+    }
+    if (password == null || password.isEmpty) {
+      return 'Password is required';
+    }
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
+  }
+
+  /// Check if email format is valid
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+        .hasMatch(email);
+  }
+
+  /// Show success message to user
+  void _showSuccessMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Login successful!'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  /// Navigate user to home page
+  void _navigateToHome() {
+    context.goNamed(HomePageWidget.routeName);
   }
 
   @override
@@ -329,6 +421,44 @@ class _LoginWidgetState extends State<LoginWidget> {
                               ),
                             ),
                           ),
+                          // Error Message Display
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0.0, 12.0, 0.0, 0.0),
+                            child: Consumer(
+                              builder: (context, ref, child) {
+                                final error = ref.watch(authErrorProvider);
+                                if (error == null || error.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.shade50,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border:
+                                        Border.all(color: Colors.red.shade300),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.error_outline,
+                                          color: Colors.red.shade700),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          error,
+                                          style: TextStyle(
+                                            color: Colors.red.shade700,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 8.0, 0.0, 0.0),
@@ -451,10 +581,12 @@ class _LoginWidgetState extends State<LoginWidget> {
                             padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 16.0, 0.0, 0.0),
                             child: FFButtonWidget(
-                              onPressed: () async {
-                                context.pushNamed(Onboarding1Widget.routeName);
-                              },
-                              text: 'Login',
+                              onPressed: ref.watch(isAuthLoadingProvider)
+                                  ? null
+                                  : _handleLoginButtonPressed,
+                              text: ref.watch(isAuthLoadingProvider)
+                                  ? 'Logging In...'
+                                  : 'Login',
                               options: FFButtonOptions(
                                 width: double.infinity,
                                 height: 40.0,
