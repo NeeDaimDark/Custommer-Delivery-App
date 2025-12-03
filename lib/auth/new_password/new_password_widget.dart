@@ -68,30 +68,29 @@ class _NewPasswordWidgetState extends ConsumerState<NewPasswordWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding:
-                          const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 6.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 0.0, 0.0, 6.0),
                       child: Text(
                         'New Password',
-                        style: FlutterFlowTheme.of(context)
-                            .headlineLarge
-                            .override(
-                              font: GoogleFonts.merriweather(
-                                fontWeight: FlutterFlowTheme.of(context)
-                                    .headlineLarge
-                                    .fontWeight,
-                                fontStyle: FlutterFlowTheme.of(context)
-                                    .headlineLarge
-                                    .fontStyle,
-                              ),
-                              color: FlutterFlowTheme.of(context).primary,
-                              letterSpacing: 0.0,
-                              fontWeight: FlutterFlowTheme.of(context)
-                                  .headlineLarge
-                                  .fontWeight,
-                              fontStyle: FlutterFlowTheme.of(context)
-                                  .headlineLarge
-                                  .fontStyle,
-                            ),
+                        style:
+                            FlutterFlowTheme.of(context).headlineLarge.override(
+                                  font: GoogleFonts.merriweather(
+                                    fontWeight: FlutterFlowTheme.of(context)
+                                        .headlineLarge
+                                        .fontWeight,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .headlineLarge
+                                        .fontStyle,
+                                  ),
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  letterSpacing: 0.0,
+                                  fontWeight: FlutterFlowTheme.of(context)
+                                      .headlineLarge
+                                      .fontWeight,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .headlineLarge
+                                      .fontStyle,
+                                ),
                       ),
                     ),
                     Padding(
@@ -99,26 +98,25 @@ class _NewPasswordWidgetState extends ConsumerState<NewPasswordWidget> {
                           0.0, 0.0, 0.0, 24.0),
                       child: Text(
                         'Please enter your new password',
-                        style:
-                            FlutterFlowTheme.of(context).bodyMedium.override(
-                                  font: GoogleFonts.ubuntu(
-                                    fontWeight: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontWeight,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontStyle,
-                                  ),
-                                  color: const Color(0xFF6B7280),
-                                  fontSize: 14.0,
-                                  letterSpacing: 0.0,
-                                  fontWeight: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .fontWeight,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .bodyMedium
-                                      .fontStyle,
-                                ),
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.ubuntu(
+                                fontWeight: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontWeight,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .fontStyle,
+                              ),
+                              color: const Color(0xFF6B7280),
+                              fontSize: 14.0,
+                              letterSpacing: 0.0,
+                              fontWeight: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontWeight,
+                              fontStyle: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .fontStyle,
+                            ),
                       ),
                     ),
                     // Error message
@@ -334,8 +332,7 @@ class _NewPasswordWidgetState extends ConsumerState<NewPasswordWidget> {
                                     .secondaryBackground,
                                 borderRadius: BorderRadius.circular(12.0),
                                 border: Border.all(
-                                  color:
-                                      FlutterFlowTheme.of(context).primary,
+                                  color: FlutterFlowTheme.of(context).primary,
                                 ),
                               ),
                               child: Padding(
@@ -361,8 +358,7 @@ class _NewPasswordWidgetState extends ConsumerState<NewPasswordWidget> {
                                         () => _model.passwordVisibility2 =
                                             !_model.passwordVisibility2,
                                       ),
-                                      focusNode:
-                                          FocusNode(skipTraversal: true),
+                                      focusNode: FocusNode(skipTraversal: true),
                                       child: Icon(
                                         _model.passwordVisibility2
                                             ? Icons.visibility_outlined
@@ -375,14 +371,14 @@ class _NewPasswordWidgetState extends ConsumerState<NewPasswordWidget> {
                                       .bodyMedium
                                       .override(
                                         font: GoogleFonts.ubuntu(
-                                          fontWeight: FlutterFlowTheme.of(
-                                                  context)
-                                              .bodyMedium
-                                              .fontWeight,
-                                          fontStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .bodyMedium
-                                              .fontStyle,
+                                          fontWeight:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontWeight,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontStyle,
                                         ),
                                         letterSpacing: 0.0,
                                         fontWeight: FlutterFlowTheme.of(context)
@@ -392,11 +388,9 @@ class _NewPasswordWidgetState extends ConsumerState<NewPasswordWidget> {
                                             .bodyMedium
                                             .fontStyle,
                                       ),
-                                  validator: (value) =>
-                                      ForgotPasswordValidators
-                                          .validatePasswordMatch(
-                                              value,
-                                              _model.textController1?.text),
+                                  validator: (value) => ForgotPasswordValidators
+                                      .validatePasswordMatch(
+                                          value, _model.textController1?.text),
                                 ),
                               ),
                             ),
@@ -419,37 +413,32 @@ class _NewPasswordWidgetState extends ConsumerState<NewPasswordWidget> {
                                   final newPassword =
                                       _model.textController1!.text;
                                   final success = await ref
-                                      .read(
-                                          forgotPasswordProvider.notifier)
+                                      .read(forgotPasswordProvider.notifier)
                                       .resetPassword(newPassword);
 
                                   if (success && mounted) {
                                     // Clear forgot password state
                                     ref
-                                        .read(
-                                            forgotPasswordProvider.notifier)
+                                        .read(forgotPasswordProvider.notifier)
                                         .reset();
 
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(
-                                          SnackBar(
-                                            content: const Text(
-                                                'Password reset successfully'),
-                                            backgroundColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .success,
-                                            duration:
-                                                const Duration(seconds: 2),
-                                          ),
-                                        );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: const Text(
+                                            'Password reset successfully'),
+                                        backgroundColor:
+                                            FlutterFlowTheme.of(context)
+                                                .success,
+                                        duration: const Duration(seconds: 2),
+                                      ),
+                                    );
 
                                     Future.delayed(
-                                        const Duration(milliseconds: 500),
-                                        () {
-                                          if (mounted) {
-                                            context.go(LoginWidget.routePath);
-                                          }
-                                        });
+                                        const Duration(milliseconds: 500), () {
+                                      if (mounted) {
+                                        context.go(LoginWidget.routePath);
+                                      }
+                                    });
                                   }
                                 },
                           text: forgotPasswordState.isLoading
@@ -467,9 +456,8 @@ class _NewPasswordWidgetState extends ConsumerState<NewPasswordWidget> {
                             padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
                             iconAlignment: IconAlignment.end,
-                            iconPadding:
-                                const EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 0.0),
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                                0.0, 0.0, 0.0, 0.0),
                             color: forgotPasswordState.isLoading
                                 ? FlutterFlowTheme.of(context).accent1
                                 : FlutterFlowTheme.of(context).primary,

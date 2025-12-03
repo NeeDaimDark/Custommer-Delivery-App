@@ -90,7 +90,8 @@ class ForgotPasswordNotifier extends StateNotifier<ForgotPasswordState> {
     }
 
     if (state.isOTPExpired) {
-      state = state.copyWith(error: 'OTP has expired. Please request a new one.');
+      state =
+          state.copyWith(error: 'OTP has expired. Please request a new one.');
       return false;
     }
 
@@ -120,7 +121,8 @@ class ForgotPasswordNotifier extends StateNotifier<ForgotPasswordState> {
   /// Step 3: Reset password with token
   Future<bool> resetPassword(String newPassword) async {
     if (state.resetToken == null) {
-      state = state.copyWith(error: 'Reset token not found. Please verify OTP again.');
+      state = state.copyWith(
+          error: 'Reset token not found. Please verify OTP again.');
       return false;
     }
 

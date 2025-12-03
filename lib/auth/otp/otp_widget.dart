@@ -62,7 +62,8 @@ class _OtpWidgetState extends ConsumerState<OtpWidget> {
         (_model.textController6?.text ?? '');
   }
 
-  void _moveToNextField(String value, FocusNode currentFocus, FocusNode? nextFocus) {
+  void _moveToNextField(
+      String value, FocusNode currentFocus, FocusNode? nextFocus) {
     if (value.length == 1) {
       currentFocus.unfocus();
       if (nextFocus != null) {
@@ -180,7 +181,7 @@ class _OtpWidgetState extends ConsumerState<OtpWidget> {
                         ),
                       ),
                     Container(
-                      height: 30.0,
+                      height: 20.0,
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.max,
@@ -192,35 +193,35 @@ class _OtpWidgetState extends ConsumerState<OtpWidget> {
                           _model.textFieldFocusNode2,
                           context,
                         ),
-                        Container(width: 12.0),
+                        Container(width: 8.0),
                         _buildOTPField(
                           _model.textController2!,
                           _model.textFieldFocusNode2!,
                           _model.textFieldFocusNode3,
                           context,
                         ),
-                        Container(width: 12.0),
+                        Container(width: 8.0),
                         _buildOTPField(
                           _model.textController3!,
                           _model.textFieldFocusNode3!,
                           _model.textFieldFocusNode4,
                           context,
                         ),
-                        Container(width: 12.0),
+                        Container(width: 8.0),
                         _buildOTPField(
                           _model.textController4!,
                           _model.textFieldFocusNode4!,
                           _model.textFieldFocusNode5,
                           context,
                         ),
-                        Container(width: 12.0),
+                        Container(width: 8.0),
                         _buildOTPField(
                           _model.textController5!,
                           _model.textFieldFocusNode5!,
                           _model.textFieldFocusNode6,
                           context,
                         ),
-                        Container(width: 12.0),
+                        Container(width: 8.0),
                         _buildOTPField(
                           _model.textController6!,
                           _model.textFieldFocusNode6!,
@@ -251,60 +252,53 @@ class _OtpWidgetState extends ConsumerState<OtpWidget> {
                       ),
                     Container(height: 16.0),
                     FFButtonWidget(
-                      onPressed:
-                          forgotPasswordState.isLoading || forgotPasswordState.isOTPExpired
-                              ? null
-                              : () async {
-                                  final otpCode = _getOTPCode();
+                      onPressed: forgotPasswordState.isLoading ||
+                              forgotPasswordState.isOTPExpired
+                          ? null
+                          : () async {
+                              final otpCode = _getOTPCode();
 
-                                  if (!ForgotPasswordValidators.isValidOTP(
-                                      otpCode)) {
-                                    ref
-                                        .read(forgotPasswordProvider.notifier)
-                                        .clearError();
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(
-                                          SnackBar(
-                                            content: const Text(
-                                                'Please enter a valid 6-digit code'),
-                                            backgroundColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .error,
-                                            duration:
-                                                const Duration(seconds: 2),
-                                          ),
-                                        );
-                                    return;
+                              if (!ForgotPasswordValidators.isValidOTP(
+                                  otpCode)) {
+                                ref
+                                    .read(forgotPasswordProvider.notifier)
+                                    .clearError();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text(
+                                        'Please enter a valid 6-digit code'),
+                                    backgroundColor:
+                                        FlutterFlowTheme.of(context).error,
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              final success = await ref
+                                  .read(forgotPasswordProvider.notifier)
+                                  .verifyOTP(otpCode);
+
+                              if (success && mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        const Text('OTP verified successfully'),
+                                    backgroundColor:
+                                        FlutterFlowTheme.of(context).success,
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+
+                                Future.delayed(
+                                    const Duration(milliseconds: 500), () {
+                                  if (mounted) {
+                                    context
+                                        .pushNamed(NewPasswordWidget.routeName);
                                   }
-
-                                  final success = await ref
-                                      .read(forgotPasswordProvider.notifier)
-                                      .verifyOTP(otpCode);
-
-                                  if (success && mounted) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(
-                                          SnackBar(
-                                            content: const Text(
-                                                'OTP verified successfully'),
-                                            backgroundColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .success,
-                                            duration:
-                                                const Duration(seconds: 2),
-                                          ),
-                                        );
-
-                                    Future.delayed(
-                                        const Duration(milliseconds: 500),
-                                        () {
-                                          if (mounted) {
-                                            context.pushNamed(
-                                                NewPasswordWidget.routeName);
-                                          }
-                                        });
-                                  }
-                                },
+                                });
+                              }
+                            },
                       text: forgotPasswordState.isLoading
                           ? 'Verifying...'
                           : 'Next',
@@ -312,8 +306,8 @@ class _OtpWidgetState extends ConsumerState<OtpWidget> {
                         width: double.infinity,
                         height: 50.0,
                         padding: const EdgeInsets.all(8.0),
-                        iconPadding:
-                            const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                        iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 0.0, 0.0, 0.0),
                         color: forgotPasswordState.isLoading ||
                                 forgotPasswordState.isOTPExpired
                             ? FlutterFlowTheme.of(context).accent1
@@ -381,8 +375,7 @@ class _OtpWidgetState extends ConsumerState<OtpWidget> {
                                         .bodyMedium
                                         .fontStyle,
                                   ),
-                                  color:
-                                      FlutterFlowTheme.of(context).tertiary,
+                                  color: FlutterFlowTheme.of(context).tertiary,
                                   fontSize: 14.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w500,
@@ -411,11 +404,11 @@ class _OtpWidgetState extends ConsumerState<OtpWidget> {
     BuildContext context,
   ) {
     return Container(
-      width: 50.0,
-      height: 50.0,
+      width: 40.0,
+      height: 40.0,
       decoration: BoxDecoration(
         color: const Color(0xFFE5E7EB),
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(10.0),
         border: Border.all(
           color: currentFocus.hasFocus
               ? FlutterFlowTheme.of(context).primary
@@ -431,11 +424,10 @@ class _OtpWidgetState extends ConsumerState<OtpWidget> {
         keyboardType: TextInputType.number,
         style: FlutterFlowTheme.of(context).headlineMedium.override(
               font: GoogleFonts.merriweather(
-                fontWeight: FlutterFlowTheme.of(context)
-                    .headlineMedium
-                    .fontWeight,
+                fontWeight:
+                    FlutterFlowTheme.of(context).headlineMedium.fontWeight,
               ),
-              fontSize: 20.0,
+              fontSize: 16.0,
               letterSpacing: 0.0,
             ),
         decoration: const InputDecoration(

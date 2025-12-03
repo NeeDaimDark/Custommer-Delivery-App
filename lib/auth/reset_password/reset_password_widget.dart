@@ -17,7 +17,8 @@ class ResetPasswordWidget extends ConsumerStatefulWidget {
   static String routePath = '/resetPassword';
 
   @override
-  ConsumerState<ResetPasswordWidget> createState() => _ResetPasswordWidgetState();
+  ConsumerState<ResetPasswordWidget> createState() =>
+      _ResetPasswordWidgetState();
 }
 
 class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
@@ -211,8 +212,7 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
                                 boxShadow: [
                                   BoxShadow(
                                     blurRadius: 4.0,
-                                    color:
-                                        FlutterFlowTheme.of(context).primary,
+                                    color: FlutterFlowTheme.of(context).primary,
                                     offset: const Offset(
                                       0.0,
                                       2.0,
@@ -221,8 +221,7 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
                                 ],
                                 borderRadius: BorderRadius.circular(12.0),
                                 border: Border.all(
-                                  color:
-                                      FlutterFlowTheme.of(context).primary,
+                                  color: FlutterFlowTheme.of(context).primary,
                                   width: 1.0,
                                 ),
                               ),
@@ -238,12 +237,14 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
                                       .bodyMedium
                                       .override(
                                         font: GoogleFonts.ubuntu(
-                                          fontWeight: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .fontWeight,
-                                          fontStyle: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .fontStyle,
+                                          fontWeight:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontWeight,
+                                          fontStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .fontStyle,
                                         ),
                                         color: FlutterFlowTheme.of(context)
                                             .primary,
@@ -264,8 +265,7 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
                                           16.0, 14.0, 16.0, 14.0),
                                   prefixIcon: Icon(
                                     Icons.mail_outline,
-                                    color:
-                                        FlutterFlowTheme.of(context).primary,
+                                    color: FlutterFlowTheme.of(context).primary,
                                     size: 20.0,
                                   ),
                                 ),
@@ -280,6 +280,7 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
                                             .bodyMedium
                                             .fontStyle,
                                       ),
+                                      color: const Color(0xFF111827),
                                       letterSpacing: 0.0,
                                       fontWeight: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -309,34 +310,29 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
 
                                 final email = _model.textController!.text;
                                 ref
-                                    .read(
-                                        forgotPasswordProvider.notifier)
+                                    .read(forgotPasswordProvider.notifier)
                                     .requestPasswordReset(email)
                                     .then((success) {
                                   if (success && mounted) {
                                     // Show success message
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(
+                                    ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: const Text(
                                             'OTP sent to your email'),
                                         backgroundColor:
                                             FlutterFlowTheme.of(context)
                                                 .success,
-                                        duration:
-                                            const Duration(seconds: 2),
+                                        duration: const Duration(seconds: 2),
                                       ),
                                     );
 
                                     // Navigate to OTP screen
                                     Future.delayed(
-                                        const Duration(milliseconds: 500),
-                                        () {
-                                          if (mounted) {
-                                            context.pushNamed(
-                                                OtpWidget.routeName);
-                                          }
-                                        });
+                                        const Duration(milliseconds: 500), () {
+                                      if (mounted) {
+                                        context.pushNamed(OtpWidget.routeName);
+                                      }
+                                    });
                                   }
                                 });
                               },
@@ -352,22 +348,21 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
                           color: forgotPasswordState.isLoading
                               ? FlutterFlowTheme.of(context).accent1
                               : FlutterFlowTheme.of(context).primary,
-                          textStyle: FlutterFlowTheme.of(context)
-                              .titleSmall
-                              .override(
-                                font: GoogleFonts.merriweather(
-                                  fontWeight: FontWeight.bold,
-                                  fontStyle: FlutterFlowTheme.of(context)
-                                      .titleSmall
-                                      .fontStyle,
-                                ),
-                                color: Colors.white,
-                                letterSpacing: 0.0,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FlutterFlowTheme.of(context)
-                                    .titleSmall
-                                    .fontStyle,
-                              ),
+                          textStyle:
+                              FlutterFlowTheme.of(context).titleSmall.override(
+                                    font: GoogleFonts.merriweather(
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FlutterFlowTheme.of(context)
+                                          .titleSmall
+                                          .fontStyle,
+                                    ),
+                                    color: Colors.white,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .titleSmall
+                                        .fontStyle,
+                                  ),
                           elevation: 2.0,
                           borderSide: const BorderSide(
                             color: Colors.transparent,
@@ -395,8 +390,7 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                    color: FlutterFlowTheme.of(context)
-                                        .primary,
+                                    color: FlutterFlowTheme.of(context).primary,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
                                     fontStyle: FlutterFlowTheme.of(context)

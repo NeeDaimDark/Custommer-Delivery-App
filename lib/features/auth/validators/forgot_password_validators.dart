@@ -77,7 +77,8 @@ class ForgotPasswordValidators {
   }
 
   /// Validate password confirmation match
-  static String? validatePasswordMatch(String? value, String? originalPassword) {
+  static String? validatePasswordMatch(
+      String? value, String? originalPassword) {
     if (value == null || value.isEmpty) {
       return 'Please confirm your password';
     }
