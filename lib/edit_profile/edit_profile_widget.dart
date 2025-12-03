@@ -59,7 +59,7 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
     });
   }
 
-  /// Handle profile update
+  /// Handle profile update (name and phone only)
   Future<void> _handleUpdateProfile() async {
     final name = _model.textController1?.text.trim();
     final phone = _model.textController3?.text.trim();
@@ -68,6 +68,10 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
       _showErrorMessage('Please enter your name');
       return;
     }
+
+    print('=== PROFILE UPDATE START ===');
+    print('Name: $name');
+    print('Phone: $phone');
 
     // Update profile
     final success = await ref.read(authProvider.notifier).updateProfile(
@@ -78,21 +82,8 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
     if (!mounted) return;
 
     if (success) {
-      // Upload profile picture if selected
-      if (_selectedImage != null) {
-        final uploadSuccess =
-            await ref.read(authProvider.notifier).uploadProfilePhoto(_selectedImage!);
-
-        if (!mounted) return;
-
-        if (uploadSuccess) {
-          _showSuccessMessage('Profile updated successfully!');
-        } else {
-          _showSuccessMessage('Profile updated, but photo upload failed');
-        }
-      } else {
-        _showSuccessMessage('Profile updated successfully!');
-      }
+      print('Profile update successful');
+      _showSuccessMessage('Profile updated successfully!');
 
       // Go back to profile page
       Future.delayed(const Duration(seconds: 1), () {
@@ -100,7 +91,38 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
       });
     } else {
       final error = ref.read(authErrorProvider);
+      print('Profile update failed: $error');
       _showErrorMessage(error ?? 'Failed to update profile');
+    }
+  }
+
+  /// Handle profile photo upload (separate from profile update)
+  Future<void> _handleUploadProfilePhoto() async {
+    if (_selectedImage == null) {
+      _showErrorMessage('Please select an image first');
+      return;
+    }
+
+    print('=== UPLOAD PROFILE PHOTO START ===');
+    print('Selected Image: $_selectedImage');
+    print('Image path: ${_selectedImage?.path}');
+
+    final uploadSuccess =
+        await ref.read(authProvider.notifier).uploadProfilePhoto(_selectedImage!);
+
+    if (!mounted) return;
+
+    if (uploadSuccess) {
+      print('Image upload successful');
+      _showSuccessMessage('Profile picture updated successfully!');
+      // Clear selected image after successful upload
+      setState(() {
+        _selectedImage = null;
+      });
+    } else {
+      final error = ref.read(authErrorProvider);
+      print('Image upload failed: $error');
+      _showErrorMessage(error ?? 'Failed to upload photo');
     }
   }
 
@@ -129,12 +151,20 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
   /// Pick image from gallery or camera
   Future<void> _pickImage(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
+    print('Picking image from: ${source == ImageSource.camera ? 'CAMERA' : 'GALLERY'}');
+    
     final XFile? image = await picker.pickImage(source: source);
 
     if (image != null) {
+      print('Image picked successfully');
+      print('Image path: ${image.path}');
+      print('Image name: ${image.name}');
       setState(() {
         _selectedImage = image;
       });
+      print('Selected image set in state: $_selectedImage');
+    } else {
+      print('Image picker cancelled or no image selected');
     }
   }
 
@@ -223,7 +253,8 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             ListTile(
-                                              leading: const Icon(Icons.photo_camera),
+                                              leading: const Icon(
+                                                  Icons.photo_camera),
                                               title: const Text('Take Photo'),
                                               onTap: () {
                                                 Navigator.pop(context);
@@ -231,8 +262,10 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
                                               },
                                             ),
                                             ListTile(
-                                              leading: const Icon(Icons.photo_library),
-                                              title: const Text('Choose from Gallery'),
+                                              leading: const Icon(
+                                                  Icons.photo_library),
+                                              title: const Text(
+                                                  'Choose from Gallery'),
                                               onTap: () {
                                                 Navigator.pop(context);
                                                 _pickImage(ImageSource.gallery);
@@ -254,40 +287,53 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
                                         ? DecorationImage(
                                             fit: BoxFit.cover,
                                             image: FileImage(
-                                              dart_io.File(_selectedImage!.path),
+                                              dart_io.File(
+                                                  _selectedImage!.path),
                                             ),
                                           )
-                                        : (profileImage != null && profileImage.isNotEmpty
+                                        : (profileImage != null &&
+                                                profileImage.isNotEmpty
                                             ? DecorationImage(
                                                 fit: BoxFit.cover,
-                                                image: NetworkImage(profileImage),
+                                                image:
+                                                    NetworkImage(profileImage),
                                               )
                                             : null),
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: FlutterFlowTheme.of(context).primary,
+                                      color:
+                                          FlutterFlowTheme.of(context).primary,
                                       width: 3.0,
                                     ),
                                   ),
-                                  alignment: const AlignmentDirectional(0.0, 0.0),
-                                  child: _selectedImage == null && (profileImage == null || profileImage.isEmpty)
+                                  alignment:
+                                      const AlignmentDirectional(0.0, 0.0),
+                                  child: _selectedImage == null &&
+                                          (profileImage == null ||
+                                              profileImage.isEmpty)
                                       ? Icon(
                                           Icons.person,
                                           size: 60.0,
-                                          color: FlutterFlowTheme.of(context).primary,
+                                          color: FlutterFlowTheme.of(context)
+                                              .primary,
                                         )
                                       : Align(
-                                          alignment: const AlignmentDirectional(1.0, 1.0),
+                                          alignment: const AlignmentDirectional(
+                                              1.0, 1.0),
                                           child: Container(
                                             width: 40.0,
                                             height: 40.0,
                                             decoration: BoxDecoration(
-                                              color: FlutterFlowTheme.of(context).primary,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
                                               shape: BoxShape.circle,
                                             ),
                                             child: Icon(
                                               Icons.camera_alt,
-                                              color: FlutterFlowTheme.of(context).info,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .info,
                                               size: 20.0,
                                             ),
                                           ),
@@ -824,6 +870,47 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
                           borderRadius: BorderRadius.circular(24.0),
                         ),
                       ),
+                      // Upload photo button - only show if image is selected
+                      if (_selectedImage != null)
+                        FFButtonWidget(
+                          onPressed: ref.watch(isAuthLoadingProvider)
+                              ? null
+                              : _handleUploadProfilePhoto,
+                          text: ref.watch(isAuthLoadingProvider)
+                              ? 'Uploading...'
+                              : 'Upload Photo',
+                          options: FFButtonOptions(
+                            width: double.infinity,
+                            height: 50.0,
+                            padding: const EdgeInsets.all(8.0),
+                            iconPadding:
+                                const EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 0.0),
+                            color: FlutterFlowTheme.of(context).accent1,
+                            textStyle: FlutterFlowTheme.of(context)
+                                .titleSmall
+                                .override(
+                                  font: GoogleFonts.merriweather(
+                                    fontWeight: FlutterFlowTheme.of(context)
+                                        .titleSmall
+                                        .fontWeight,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .titleSmall
+                                        .fontStyle,
+                                  ),
+                                  color: FlutterFlowTheme.of(context).info,
+                                  letterSpacing: 1.0,
+                                  fontWeight: FlutterFlowTheme.of(context)
+                                      .titleSmall
+                                      .fontWeight,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .titleSmall
+                                      .fontStyle,
+                                ),
+                            elevation: 2.0,
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
+                        ),
                     ].divide(const SizedBox(height: 24.0)),
                   ),
                 ],

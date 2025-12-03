@@ -7,7 +7,6 @@ part 'user_model.g.dart';
 @freezed
 class UserModel with _$UserModel {
   const factory UserModel({
-    // Backend returns 'id' in auth responses
     required String id,
     required String name,
     required String email,

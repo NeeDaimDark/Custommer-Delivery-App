@@ -204,9 +204,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// Upload profile photo
   Future<bool> uploadProfilePhoto(XFile image) async {
     try {
+      print('Auth Provider: uploadProfilePhoto called');
+      print('Image path: ${image.path}');
       state = state.copyWith(isLoading: true, error: null);
 
       final imageUrl = await _authService.uploadProfilePhoto(image);
+
+      print('Auth Provider: Upload successful, URL: $imageUrl');
 
       // Update user with new image
       if (state.user != null) {
@@ -218,6 +222,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       return true;
     } catch (e) {
+      print('Auth Provider: Upload failed with error: $e');
       state = state.copyWith(
         error: _getErrorMessage(e),
         isLoading: false,

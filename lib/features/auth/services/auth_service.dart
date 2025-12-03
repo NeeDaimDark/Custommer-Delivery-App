@@ -81,7 +81,8 @@ class AuthService {
 
       // Parse response
       print('Attempting to parse AuthResponse...');
-      final authResponse = AuthResponse.fromJson(response);
+      final normalizedResponse = _normalizeAuthResponse(response);
+      final authResponse = AuthResponse.fromJson(normalizedResponse);
       print('AuthResponse parsed successfully!');
       print('Token: ${authResponse.token}');
       print('Customer ID: ${authResponse.customer.id}');
@@ -126,7 +127,8 @@ class AuthService {
       );
 
       // Parse response
-      final authResponse = AuthResponse.fromJson(response);
+      final normalizedResponse = _normalizeAuthResponse(response);
+      final authResponse = AuthResponse.fromJson(normalizedResponse);
 
       // Save remember me preference
       await _storage.saveRememberMe(rememberMe);
@@ -242,6 +244,32 @@ class AuthService {
   }
 
   // ==========================
+  // Helper Methods
+  // ==========================
+
+  /// Normalize MongoDB response - maps _id to id in customer object
+  Map<String, dynamic> _normalizeAuthResponse(Map<String, dynamic> response) {
+    final normalized = {...response};
+    if (normalized.containsKey('customer') &&
+        normalized['customer'] is Map<String, dynamic>) {
+      normalized['customer'] =
+          _normalizeCustomerJson(normalized['customer'] as Map<String, dynamic>);
+    }
+    return normalized;
+  }
+
+  /// Normalize MongoDB customer JSON - maps _id to id
+  Map<String, dynamic> _normalizeCustomerJson(
+      Map<String, dynamic> customerJson) {
+    final normalized = {...customerJson};
+    // MongoDB returns _id, but our model expects id
+    if (normalized['id'] == null && normalized['_id'] != null) {
+      normalized['id'] = normalized['_id'];
+    }
+    return normalized;
+  }
+
+  // ==========================
   // Profile Management
   // ==========================
 
@@ -253,7 +281,9 @@ class AuthService {
         requiresAuth: true,
       );
 
-      return UserModel.fromJson(response['customer'] as Map<String, dynamic>);
+      final customerJson =
+          _normalizeCustomerJson(response['customer'] as Map<String, dynamic>);
+      return UserModel.fromJson(customerJson);
     } catch (e) {
       rethrow;
     }
@@ -277,7 +307,9 @@ class AuthService {
         requiresAuth: true,
       );
 
-      return UserModel.fromJson(response['customer'] as Map<String, dynamic>);
+      final customerJson =
+          _normalizeCustomerJson(response['customer'] as Map<String, dynamic>);
+      return UserModel.fromJson(customerJson);
     } catch (e) {
       rethrow;
     }
@@ -286,10 +318,18 @@ class AuthService {
   /// Upload profile photo
   Future<String> uploadProfilePhoto(XFile image) async {
     try {
+      print('=== UPLOAD PROFILE PHOTO START ===');
+      print('Image path: ${image.path}');
+      print('Image name: ${image.name}');
+      
       final file = await http.MultipartFile.fromPath(
         'upload',
         image.path,
       );
+
+      print('Multipart file created');
+      print('File field name: ${file.field}');
+      print('File filename: ${file.filename}');
 
       final response = await _httpClient.multipart(
         ApiConstants.uploadPhoto,
@@ -297,6 +337,8 @@ class AuthService {
         files: [file],
         requiresAuth: true,
       );
+
+      print('Upload response received: $response');
 
       // Try to get profileImage from response, or use profileImageUrl, or imageUrl
       final imageUrl = response['profileImage'] as String? ??
@@ -310,8 +352,10 @@ class AuthService {
             'Upload successful but no image URL in response. Response: $response');
       }
 
+      print('Image URL extracted: $imageUrl');
       return imageUrl;
     } catch (e) {
+      print('Upload error: $e');
       rethrow;
     }
   }

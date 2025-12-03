@@ -20,7 +20,6 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserModel {
-// Backend returns 'id' in auth responses
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
@@ -253,7 +252,6 @@ class _$UserModelImpl implements _UserModel {
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserModelImplFromJson(json);
 
-// Backend returns 'id' in auth responses
   @override
   final String id;
   @override
@@ -344,7 +342,6 @@ abstract class _UserModel implements UserModel {
   factory _UserModel.fromJson(Map<String, dynamic> json) =
       _$UserModelImpl.fromJson;
 
-// Backend returns 'id' in auth responses
   @override
   String get id;
   @override
