@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:customer_app_temp_7/features/auth/providers/auth_provider.dart';
+import 'package:customer_app_temp_7/core/services/secure_storage_service.dart';
 import 'login_model.dart';
 export 'login_model.dart';
 
@@ -31,6 +32,7 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
     _initializeFormControllers();
     _clearErrorsOnPageLoad();
     _setupErrorClearingListeners();
+    _loadSavedCredentials();
   }
 
   /// Initialize all form text controllers and focus nodes
@@ -46,6 +48,31 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
   void _clearErrorsOnPageLoad() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) ref.read(authProvider.notifier).clearError();
+    });
+  }
+
+  /// Load saved credentials if remember me was previously enabled
+  void _loadSavedCredentials() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+
+      final secureStorage = SecureStorageService.instance;
+
+      // Check if remember me was previously enabled
+      final rememberMe = await secureStorage.getRememberMe();
+      if (!rememberMe) return;
+
+      // Load saved credentials
+      final savedUsername = await secureStorage.getSavedUsername();
+      final savedPassword = await secureStorage.getSavedPassword();
+
+      if (savedUsername != null && savedPassword != null && mounted) {
+        setState(() {
+          _model.textController1?.text = savedUsername;
+          _model.textController2?.text = savedPassword;
+          _model.checkboxValue = true;
+        });
+      }
     });
   }
 
@@ -72,6 +99,7 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
   Future<void> _handleLoginButtonPressed() async {
     final email = _model.textController1?.text.trim();
     final password = _model.textController2?.text;
+    final rememberMe = _model.checkboxValue ?? false;
 
     // Validate form inputs
     final validationError = _validateLoginInputs(email, password);
@@ -80,10 +108,11 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
       return;
     }
 
-    // Attempt login via auth provider
+    // Attempt login via auth provider with remember me option
     final success = await ref.read(authProvider.notifier).login(
           email: email!,
           password: password!,
+          rememberMe: rememberMe,
         );
 
     if (!mounted) return;
@@ -222,7 +251,7 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                                                   .fontStyle,
                                         ),
                                         color: FlutterFlowTheme.of(context)
-                                            .primary,
+                                            .secondaryText,
                                         letterSpacing: 0.0,
                                         fontWeight: FlutterFlowTheme.of(context)
                                             .bodyMedium
@@ -275,6 +304,7 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                                             .bodyMedium
                                             .fontStyle,
                                       ),
+                                      color: Colors.black,
                                       letterSpacing: 0.0,
                                       fontWeight: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -284,7 +314,8 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                                           .fontStyle,
                                     ),
                                 keyboardType: TextInputType.emailAddress,
-                                cursorColor: const Color(0xFF16A34A),
+                                cursorColor:
+                                    FlutterFlowTheme.of(context).primary,
                                 validator: _model.textController1Validator
                                     .asValidator(context),
                                 inputFormatters: [
@@ -328,7 +359,7 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                                                   .fontStyle,
                                         ),
                                         color: FlutterFlowTheme.of(context)
-                                            .primary,
+                                            .secondaryText,
                                         letterSpacing: 0.0,
                                         fontWeight: FlutterFlowTheme.of(context)
                                             .bodyMedium
@@ -394,6 +425,7 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                                             .bodyMedium
                                             .fontStyle,
                                       ),
+                                      color: Colors.black,
                                       letterSpacing: 0.0,
                                       fontWeight: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -403,7 +435,7 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                                           .fontStyle,
                                     ),
                                 cursorColor:
-                                    FlutterFlowTheme.of(context).accent3,
+                                    FlutterFlowTheme.of(context).primary,
                                 validator: _model.textController2Validator
                                     .asValidator(context),
                                 inputFormatters: [
@@ -520,6 +552,9 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                                                         .bodySmall
                                                         .fontStyle,
                                               ),
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
                                               fontSize: 13.0,
                                               letterSpacing: 0.0,
                                               fontWeight:

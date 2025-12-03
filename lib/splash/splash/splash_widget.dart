@@ -4,20 +4,22 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:customer_app_temp_7/features/auth/providers/auth_provider.dart';
 import 'splash_model.dart';
 export 'splash_model.dart';
 
-class SplashWidget extends StatefulWidget {
+class SplashWidget extends ConsumerStatefulWidget {
   const SplashWidget({super.key});
 
   static String routeName = 'Splash';
   static String routePath = '/splash';
 
   @override
-  State<SplashWidget> createState() => _SplashWidgetState();
+  ConsumerState<SplashWidget> createState() => _SplashWidgetState();
 }
 
-class _SplashWidgetState extends State<SplashWidget> {
+class _SplashWidgetState extends ConsumerState<SplashWidget> {
   late SplashModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -26,6 +28,13 @@ class _SplashWidgetState extends State<SplashWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => SplashModel());
+  }
+
+  /// Navigate based on authentication status
+  void _navigateBasedOnAuth(bool isAuthenticated) {
+    if (isAuthenticated) {
+      context.goNamed(HomePageWidget.routeName);
+    }
   }
 
   @override
@@ -37,6 +46,18 @@ class _SplashWidgetState extends State<SplashWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // Watch authentication status
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
+
+    // Auto-navigate if authenticated
+    if (isAuthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _navigateBasedOnAuth(true);
+        }
+      });
+    }
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();

@@ -21,6 +21,9 @@ class SecureStorageService {
   static const String _refreshTokenKey = 'refresh_token';
   static const String _userIdKey = 'user_id';
   static const String _userEmailKey = 'user_email';
+  static const String _rememberMeKey = 'remember_me';
+  static const String _usernameKey = 'username';
+  static const String _passwordKey = 'password';
 
   // ==========================
   // Token Management
@@ -76,6 +79,55 @@ class SecureStorageService {
   /// Get user email
   Future<String?> getUserEmail() async {
     return await _storage.read(key: _userEmailKey);
+  }
+
+  // ==========================
+  // Remember Me Preference
+  // ==========================
+
+  /// Save remember me preference
+  Future<void> saveRememberMe(bool rememberMe) async {
+    await _storage.write(key: _rememberMeKey, value: rememberMe.toString());
+  }
+
+  /// Get remember me preference
+  Future<bool> getRememberMe() async {
+    final value = await _storage.read(key: _rememberMeKey);
+    return value == 'true';
+  }
+
+  // ==========================
+  // Credential Storage (for Remember Me)
+  // ==========================
+
+  /// Save username and password for remember me
+  Future<void> saveCredentials({
+    required String username,
+    required String password,
+  }) async {
+    await Future.wait([
+      _storage.write(key: _usernameKey, value: username),
+      _storage.write(key: _passwordKey, value: password),
+    ]);
+  }
+
+  /// Get saved username
+  Future<String?> getSavedUsername() async {
+    return await _storage.read(key: _usernameKey);
+  }
+
+  /// Get saved password
+  Future<String?> getSavedPassword() async {
+    return await _storage.read(key: _passwordKey);
+  }
+
+  /// Clear saved credentials (called on logout or when remember me is disabled)
+  Future<void> clearCredentials() async {
+    await Future.wait([
+      _storage.delete(key: _usernameKey),
+      _storage.delete(key: _passwordKey),
+      _storage.delete(key: _rememberMeKey),
+    ]);
   }
 
   // ==========================

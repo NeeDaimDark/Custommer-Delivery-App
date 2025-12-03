@@ -61,14 +61,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final isAuth = await _authService.isAuthenticated();
       if (isAuth) {
-        // Load user profile
+        // Try to load user profile (this will auto-refresh token if expired)
         await loadUserProfile();
       } else {
         // No user authenticated - this is normal, not an error
         state = state.copyWith(isAuthenticated: false, error: null);
       }
     } catch (e) {
-      // Silently fail - user is just not authenticated
+      // If profile loading fails (e.g., network issue or invalid token),
+      // don't stay authenticated
       state = state.copyWith(isAuthenticated: false, error: null);
     }
   }
@@ -132,6 +133,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<bool> login({
     required String email,
     required String password,
+    bool rememberMe = false,
   }) async {
     try {
       state = state.copyWith(isLoading: true, error: null);
@@ -139,6 +141,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final response = await _authService.login(
         email: email,
         password: password,
+        rememberMe: rememberMe,
       );
 
       state = state.copyWith(

@@ -7,7 +7,6 @@ import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'offers_model.dart';
 export 'offers_model.dart';
 

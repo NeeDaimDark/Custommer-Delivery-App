@@ -113,6 +113,7 @@ class AuthService {
   Future<AuthResponse> login({
     required String email,
     required String password,
+    bool rememberMe = false,
   }) async {
     try {
       final response = await _httpClient.post(
@@ -127,7 +128,22 @@ class AuthService {
       // Parse response
       final authResponse = AuthResponse.fromJson(response);
 
-      // Save tokens and user info
+      // Save remember me preference
+      await _storage.saveRememberMe(rememberMe);
+
+      // Save credentials if remember me is enabled
+      if (rememberMe) {
+        await _storage.saveCredentials(
+          username: email,
+          password: password,
+        );
+      } else {
+        // Clear any previously saved credentials
+        await _storage.clearCredentials();
+      }
+
+      // Always save tokens for current session
+      // If rememberMe is false, tokens will be cleared on logout/app restart
       await _storage.saveTokens(
         accessToken: authResponse.token,
         refreshToken: authResponse.refreshToken,
@@ -159,6 +175,8 @@ class AuthService {
     } catch (e) {
       // Even if API call fails, clear local storage
     } finally {
+      // Clear credentials for remember me
+      await _storage.clearCredentials();
       // Clear all stored data
       await _storage.clearAll();
     }
@@ -291,12 +309,43 @@ class AuthService {
   // ==========================
 
   /// Check if user is authenticated
+  /// Only returns true if user has tokens AND remember me is enabled
   Future<bool> isAuthenticated() async {
-    return await _storage.isAuthenticated();
+    final hasToken = await _storage.isAuthenticated();
+    if (!hasToken) return false;
+
+    // Check if remember me was enabled
+    final rememberMe = await _storage.getRememberMe();
+    return rememberMe;
   }
 
   /// Get stored user ID
   Future<String?> getUserId() async {
     return await _storage.getUserId();
+  }
+
+  /// Manually refresh access token
+  /// Returns true if refresh was successful
+  Future<bool> refreshAccessToken() async {
+    try {
+      final refreshToken = await _storage.getRefreshToken();
+      if (refreshToken == null) return false;
+
+      final response = await _httpClient.post(
+        ApiConstants.refreshToken,
+        body: {'refreshToken': refreshToken},
+        requiresAuth: false,
+      );
+
+      // Save new tokens
+      await _storage.saveTokens(
+        accessToken: response['token'] as String,
+        refreshToken: response['refreshToken'] as String,
+      );
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
