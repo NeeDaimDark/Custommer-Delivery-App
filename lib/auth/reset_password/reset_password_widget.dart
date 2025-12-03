@@ -61,12 +61,13 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
               alignment: const AlignmentDirectional(0.0, 0.0),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: Container(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                child: SingleChildScrollView(
+                  child: Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
                       Container(
                         width: 96.0,
                         height: 96.0,
@@ -401,6 +402,7 @@ class _ResetPasswordWidgetState extends ConsumerState<ResetPasswordWidget> {
                       ),
                     ].divide(const SizedBox(height: 20.0)),
                   ),
+                ),
                 ),
               ),
             ),
