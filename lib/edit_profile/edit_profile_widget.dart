@@ -107,8 +107,9 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
     print('Selected Image: $_selectedImage');
     print('Image path: ${_selectedImage?.path}');
 
-    final uploadSuccess =
-        await ref.read(authProvider.notifier).uploadProfilePhoto(_selectedImage!);
+    final uploadSuccess = await ref
+        .read(authProvider.notifier)
+        .uploadProfilePhoto(_selectedImage!);
 
     if (!mounted) return;
 
@@ -151,8 +152,9 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
   /// Pick image from gallery or camera
   Future<void> _pickImage(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
-    print('Picking image from: ${source == ImageSource.camera ? 'CAMERA' : 'GALLERY'}');
-    
+    print(
+        'Picking image from: ${source == ImageSource.camera ? 'CAMERA' : 'GALLERY'}');
+
     final XFile? image = await picker.pickImage(source: source);
 
     if (image != null) {
@@ -883,9 +885,8 @@ class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
                             width: double.infinity,
                             height: 50.0,
                             padding: const EdgeInsets.all(8.0),
-                            iconPadding:
-                                const EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 0.0),
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                                0.0, 0.0, 0.0, 0.0),
                             color: FlutterFlowTheme.of(context).accent1,
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall

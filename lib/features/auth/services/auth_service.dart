@@ -252,8 +252,8 @@ class AuthService {
     final normalized = {...response};
     if (normalized.containsKey('customer') &&
         normalized['customer'] is Map<String, dynamic>) {
-      normalized['customer'] =
-          _normalizeCustomerJson(normalized['customer'] as Map<String, dynamic>);
+      normalized['customer'] = _normalizeCustomerJson(
+          normalized['customer'] as Map<String, dynamic>);
     }
     return normalized;
   }
@@ -321,7 +321,7 @@ class AuthService {
       print('=== UPLOAD PROFILE PHOTO START ===');
       print('Image path: ${image.path}');
       print('Image name: ${image.name}');
-      
+
       final file = await http.MultipartFile.fromPath(
         'upload',
         image.path,
