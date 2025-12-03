@@ -1,43 +1,141 @@
-import '/components/upload_photo_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import 'dart:io' as dart_io;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:customer_app_temp_7/features/auth/providers/auth_provider.dart';
+import 'package:image_picker/image_picker.dart';
 import 'edit_profile_model.dart';
 export 'edit_profile_model.dart';
 
-class EditProfileWidget extends StatefulWidget {
+class EditProfileWidget extends ConsumerStatefulWidget {
   const EditProfileWidget({super.key});
 
   static String routeName = 'Edit_Profile';
   static String routePath = '/editProfile';
 
   @override
-  State<EditProfileWidget> createState() => _EditProfileWidgetState();
+  ConsumerState<EditProfileWidget> createState() => _EditProfileWidgetState();
 }
 
-class _EditProfileWidgetState extends State<EditProfileWidget> {
+class _EditProfileWidgetState extends ConsumerState<EditProfileWidget> {
   late EditProfileModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  XFile? _selectedImage;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => EditProfileModel());
 
-    _model.textController1 ??= TextEditingController(text: 'Alex Johnson');
+    _model.textController1 ??= TextEditingController();
     _model.textFieldFocusNode1 ??= FocusNode();
 
-    _model.textController2 ??=
-        TextEditingController(text: 'alex.johnson@example.com');
+    _model.textController2 ??= TextEditingController();
     _model.textFieldFocusNode2 ??= FocusNode();
 
-    _model.textController3 ??= TextEditingController(text: '(555) 123-4567');
+    _model.textController3 ??= TextEditingController();
     _model.textFieldFocusNode3 ??= FocusNode();
+
+    _loadUserData();
+  }
+
+  /// Load current user data into form fields
+  void _loadUserData() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      final user = ref.read(currentUserProvider);
+      if (user != null) {
+        _model.textController1?.text = user.name;
+        _model.textController2?.text = user.email;
+        _model.textController3?.text = user.phone;
+      }
+    });
+  }
+
+  /// Handle profile update
+  Future<void> _handleUpdateProfile() async {
+    final name = _model.textController1?.text.trim();
+    final phone = _model.textController3?.text.trim();
+
+    if (name == null || name.isEmpty) {
+      _showErrorMessage('Please enter your name');
+      return;
+    }
+
+    // Update profile
+    final success = await ref.read(authProvider.notifier).updateProfile(
+          name: name,
+          phone: phone == null || phone.isEmpty ? null : phone,
+        );
+
+    if (!mounted) return;
+
+    if (success) {
+      // Upload profile picture if selected
+      if (_selectedImage != null) {
+        final uploadSuccess =
+            await ref.read(authProvider.notifier).uploadProfilePhoto(_selectedImage!);
+
+        if (!mounted) return;
+
+        if (uploadSuccess) {
+          _showSuccessMessage('Profile updated successfully!');
+        } else {
+          _showSuccessMessage('Profile updated, but photo upload failed');
+        }
+      } else {
+        _showSuccessMessage('Profile updated successfully!');
+      }
+
+      // Go back to profile page
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) context.safePop();
+      });
+    } else {
+      final error = ref.read(authErrorProvider);
+      _showErrorMessage(error ?? 'Failed to update profile');
+    }
+  }
+
+  /// Show success message
+  void _showSuccessMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  /// Show error message
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  /// Pick image from gallery or camera
+  Future<void> _pickImage(ImageSource source) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: source);
+
+    if (image != null) {
+      setState(() {
+        _selectedImage = image;
+      });
+    }
   }
 
   @override
@@ -105,72 +203,98 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                     children: [
                       Stack(
                         children: [
-                          InkWell(
-                            splashColor: Colors.transparent,
-                            focusColor: Colors.transparent,
-                            hoverColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onTap: () async {
-                              await showModalBottomSheet(
-                                isScrollControlled: true,
-                                backgroundColor: Colors.transparent,
-                                enableDrag: false,
-                                context: context,
-                                builder: (context) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      FocusScope.of(context).unfocus();
-                                      FocusManager.instance.primaryFocus
-                                          ?.unfocus();
+                          Consumer(
+                            builder: (context, ref, child) {
+                              final user = ref.watch(currentUserProvider);
+                              final profileImage = user?.profileImage;
+
+                              return InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  // Show image picker options
+                                  await showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return SafeArea(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ListTile(
+                                              leading: const Icon(Icons.photo_camera),
+                                              title: const Text('Take Photo'),
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                                _pickImage(ImageSource.camera);
+                                              },
+                                            ),
+                                            ListTile(
+                                              leading: const Icon(Icons.photo_library),
+                                              title: const Text('Choose from Gallery'),
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                                _pickImage(ImageSource.gallery);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
                                     },
-                                    child: Padding(
-                                      padding: MediaQuery.viewInsetsOf(context),
-                                      child: const UploadPhotoWidget(),
-                                    ),
                                   );
                                 },
-                              ).then((value) => safeSetState(() {}));
-                            },
-                            child: Container(
-                              width: 120.0,
-                              height: 120.0,
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: Image.network(
-                                    'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=400&h=400',
-                                  ).image,
-                                ),
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: FlutterFlowTheme.of(context).primary,
-                                  width: 3.0,
-                                ),
-                              ),
-                              alignment: const AlignmentDirectional(0.0, 0.0),
-                              child: Align(
-                                alignment: const AlignmentDirectional(0.0, 0.0),
                                 child: Container(
-                                  width: 40.0,
-                                  height: 40.0,
+                                  width: 120.0,
+                                  height: 120.0,
                                   decoration: BoxDecoration(
-                                    color: FlutterFlowTheme.of(context).primary,
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryBackground,
+                                    image: _selectedImage != null
+                                        ? DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: FileImage(
+                                              dart_io.File(_selectedImage!.path),
+                                            ),
+                                          )
+                                        : (profileImage != null && profileImage.isNotEmpty
+                                            ? DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image: NetworkImage(profileImage),
+                                              )
+                                            : null),
                                     shape: BoxShape.circle,
-                                  ),
-                                  child: Align(
-                                    alignment:
-                                        const AlignmentDirectional(0.0, 0.0),
-                                    child: Icon(
-                                      Icons.camera_alt,
-                                      color: FlutterFlowTheme.of(context).info,
-                                      size: 20.0,
+                                    border: Border.all(
+                                      color: FlutterFlowTheme.of(context).primary,
+                                      width: 3.0,
                                     ),
                                   ),
+                                  alignment: const AlignmentDirectional(0.0, 0.0),
+                                  child: _selectedImage == null && (profileImage == null || profileImage.isEmpty)
+                                      ? Icon(
+                                          Icons.person,
+                                          size: 60.0,
+                                          color: FlutterFlowTheme.of(context).primary,
+                                        )
+                                      : Align(
+                                          alignment: const AlignmentDirectional(1.0, 1.0),
+                                          child: Container(
+                                            width: 40.0,
+                                            height: 40.0,
+                                            decoration: BoxDecoration(
+                                              color: FlutterFlowTheme.of(context).primary,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Icon(
+                                              Icons.camera_alt,
+                                              color: FlutterFlowTheme.of(context).info,
+                                              size: 20.0,
+                                            ),
+                                          ),
+                                        ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -664,10 +788,12 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                         ),
                       ),
                       FFButtonWidget(
-                        onPressed: () {
-                          print('Button pressed ...');
-                        },
-                        text: 'Save Changes',
+                        onPressed: ref.watch(isAuthLoadingProvider)
+                            ? null
+                            : _handleUpdateProfile,
+                        text: ref.watch(isAuthLoadingProvider)
+                            ? 'Saving...'
+                            : 'Save Changes',
                         options: FFButtonOptions(
                           width: double.infinity,
                           height: 50.0,

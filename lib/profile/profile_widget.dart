@@ -5,20 +5,22 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:customer_app_temp_7/features/auth/providers/auth_provider.dart';
 import 'profile_model.dart';
 export 'profile_model.dart';
 
-class ProfileWidget extends StatefulWidget {
+class ProfileWidget extends ConsumerStatefulWidget {
   const ProfileWidget({super.key});
 
   static String routeName = 'Profile';
   static String routePath = '/profile';
 
   @override
-  State<ProfileWidget> createState() => _ProfileWidgetState();
+  ConsumerState<ProfileWidget> createState() => _ProfileWidgetState();
 }
 
-class _ProfileWidgetState extends State<ProfileWidget> {
+class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
   late ProfileModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -94,71 +96,97 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                             mainAxisSize: MainAxisSize.max,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Container(
-                                width: 100.0,
-                                height: 100.0,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryBackground,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: FlutterFlowTheme.of(context)
-                                        .secondaryBackground,
-                                    width: 2.0,
-                                  ),
-                                ),
-                                child: Align(
-                                  alignment: const AlignmentDirectional(0.0, 0.0),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'M',
+                              Consumer(
+                                builder: (context, ref, child) {
+                                  final user = ref.watch(currentUserProvider);
+                                  final profileImage = user?.profileImage;
+                                  final userName = user?.name ?? 'User';
+                                  final firstLetter = userName.isNotEmpty
+                                      ? userName[0].toUpperCase()
+                                      : 'U';
+
+                                  return Container(
+                                    width: 100.0,
+                                    height: 100.0,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
+                                        width: 2.0,
+                                      ),
+                                      image: profileImage != null && profileImage.isNotEmpty
+                                          ? DecorationImage(
+                                              image: NetworkImage(profileImage),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : null,
+                                    ),
+                                    child: profileImage == null || profileImage.isEmpty
+                                        ? Align(
+                                            alignment: const AlignmentDirectional(0.0, 0.0),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                firstLetter,
+                                                style: FlutterFlowTheme.of(context)
+                                                    .headlineLarge
+                                                    .override(
+                                                      font: GoogleFonts.merriweather(
+                                                        fontWeight: FontWeight.bold,
+                                                        fontStyle:
+                                                            FlutterFlowTheme.of(context)
+                                                                .headlineLarge
+                                                                .fontStyle,
+                                                      ),
+                                                      color: FlutterFlowTheme.of(context)
+                                                          .primary,
+                                                      letterSpacing: 0.0,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontStyle:
+                                                          FlutterFlowTheme.of(context)
+                                                              .headlineLarge
+                                                              .fontStyle,
+                                                    ),
+                                              ),
+                                            ),
+                                          )
+                                        : null,
+                                  );
+                                },
+                              ),
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 16.0, 0.0, 0.0),
+                                child: Consumer(
+                                  builder: (context, ref, child) {
+                                    final user = ref.watch(currentUserProvider);
+                                    final userName = user?.name ?? 'User';
+
+                                    return Text(
+                                      userName,
                                       style: FlutterFlowTheme.of(context)
-                                          .headlineLarge
+                                          .headlineMedium
                                           .override(
                                             font: GoogleFonts.merriweather(
                                               fontWeight: FontWeight.bold,
                                               fontStyle:
                                                   FlutterFlowTheme.of(context)
-                                                      .headlineLarge
+                                                      .headlineMedium
                                                       .fontStyle,
                                             ),
                                             color: FlutterFlowTheme.of(context)
-                                                .primary,
+                                                .secondaryBackground,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.bold,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .headlineLarge
-                                                    .fontStyle,
+                                            fontStyle: FlutterFlowTheme.of(context)
+                                                .headlineMedium
+                                                .fontStyle,
                                           ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 16.0, 0.0, 0.0),
-                                child: Text(
-                                  'Mohamed',
-                                  style: FlutterFlowTheme.of(context)
-                                      .headlineMedium
-                                      .override(
-                                        font: GoogleFonts.merriweather(
-                                          fontWeight: FontWeight.bold,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .headlineMedium
-                                                  .fontStyle,
-                                        ),
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FontWeight.bold,
-                                        fontStyle: FlutterFlowTheme.of(context)
-                                            .headlineMedium
-                                            .fontStyle,
-                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ],

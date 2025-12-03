@@ -6,20 +6,22 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:customer_app_temp_7/features/auth/providers/auth_provider.dart';
 import 'home_page_model.dart';
 export 'home_page_model.dart';
 
-class HomePageWidget extends StatefulWidget {
+class HomePageWidget extends ConsumerStatefulWidget {
   const HomePageWidget({super.key});
 
   static String routeName = 'Home_Page';
   static String routePath = '/homePage';
 
   @override
-  State<HomePageWidget> createState() => _HomePageWidgetState();
+  ConsumerState<HomePageWidget> createState() => _HomePageWidgetState();
 }
 
-class _HomePageWidgetState extends State<HomePageWidget> {
+class _HomePageWidgetState extends ConsumerState<HomePageWidget> {
   late HomePageModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -70,25 +72,32 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 mainAxisSize: MainAxisSize.max,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Good morning, User!',
-                                    style: FlutterFlowTheme.of(context)
-                                        .headlineSmall
-                                        .override(
-                                          font: GoogleFonts.merriweather(
-                                            fontWeight: FontWeight.bold,
-                                            fontStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .headlineSmall
-                                                    .fontStyle,
-                                          ),
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.bold,
-                                          fontStyle:
-                                              FlutterFlowTheme.of(context)
-                                                  .headlineSmall
-                                                  .fontStyle,
-                                        ),
+                                  Consumer(
+                                    builder: (context, ref, child) {
+                                      final user = ref.watch(currentUserProvider);
+                                      final userName = user?.name ?? 'User';
+
+                                      return Text(
+                                        'Good morning, $userName!',
+                                        style: FlutterFlowTheme.of(context)
+                                            .headlineSmall
+                                            .override(
+                                              font: GoogleFonts.merriweather(
+                                                fontWeight: FontWeight.bold,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .headlineSmall
+                                                        .fontStyle,
+                                              ),
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .headlineSmall
+                                                      .fontStyle,
+                                            ),
+                                      );
+                                    },
                                   ),
                                   Text(
                                     'Enjoy Your Experience',

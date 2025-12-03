@@ -298,7 +298,19 @@ class AuthService {
         requiresAuth: true,
       );
 
-      return response['profileImage'] as String;
+      // Try to get profileImage from response, or use profileImageUrl, or imageUrl
+      final imageUrl = response['profileImage'] as String? ??
+          response['profileImageUrl'] as String? ??
+          response['imageUrl'] as String? ??
+          response['url'] as String? ??
+          '';
+
+      if (imageUrl.isEmpty) {
+        throw Exception(
+            'Upload successful but no image URL in response. Response: $response');
+      }
+
+      return imageUrl;
     } catch (e) {
       rethrow;
     }
