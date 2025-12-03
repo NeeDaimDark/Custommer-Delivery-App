@@ -203,6 +203,29 @@ class AuthService {
     }
   }
 
+  /// Verify OTP for password reset
+  /// Returns reset token if OTP is valid
+  Future<String> verifyOTPForPasswordReset({
+    required String email,
+    required String otpCode,
+  }) async {
+    try {
+      final response = await _httpClient.post(
+        ApiConstants.verifyOTPReset,
+        body: {
+          'email': email,
+          'otpCode': otpCode,
+        },
+        requiresAuth: false,
+      );
+
+      // Return the reset token from the response
+      return response['resetToken'] as String;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Reset password with token
   Future<String> resetPassword({
     required String token,
