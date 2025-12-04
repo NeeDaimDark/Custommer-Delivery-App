@@ -4,20 +4,24 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:customer_app_temp_7/features/addresses/providers/address_provider.dart';
+import 'package:customer_app_temp_7/features/addresses/models/address_model.dart';
+import 'package:customer_app_temp_7/features/addresses/screens/add_address_screen.dart';
 import 'change_adress_model.dart';
 export 'change_adress_model.dart';
 
-class ChangeAdressWidget extends StatefulWidget {
+class ChangeAdressWidget extends ConsumerStatefulWidget {
   const ChangeAdressWidget({super.key});
 
   static String routeName = 'Change_Adress';
   static String routePath = '/changeAdress';
 
   @override
-  State<ChangeAdressWidget> createState() => _ChangeAdressWidgetState();
+  ConsumerState<ChangeAdressWidget> createState() => _ChangeAdressWidgetState();
 }
 
-class _ChangeAdressWidgetState extends State<ChangeAdressWidget> {
+class _ChangeAdressWidgetState extends ConsumerState<ChangeAdressWidget> {
   late ChangeAdressModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -26,6 +30,11 @@ class _ChangeAdressWidgetState extends State<ChangeAdressWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => ChangeAdressModel());
+
+    // Load addresses when page opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(addressListProvider.notifier).loadAddresses();
+    });
   }
 
   @override
