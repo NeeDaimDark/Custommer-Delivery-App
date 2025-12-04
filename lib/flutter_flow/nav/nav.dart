@@ -203,7 +203,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: ChangeAdressWidget.routeName,
           path: ChangeAdressWidget.routePath,
-          builder: (context, params) => const ChangeAdressWidget(),
+          builder: (context, params) => const AddressesWrapperScreen(),
         ),
         FFRoute(
           name: AdressWidget.routeName,

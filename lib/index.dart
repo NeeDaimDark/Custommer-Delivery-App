@@ -39,6 +39,8 @@ export '/more_page/more_page_widget.dart' show MorePageWidget;
 export '/messages/messages_widget.dart' show MessagesWidget;
 export '/adress/change_adress/change_adress_widget.dart'
     show ChangeAdressWidget;
+export '/features/addresses/screens/addresses_wrapper_screen.dart'
+    show AddressesWrapperScreen;
 export '/adress/adress/adress_widget.dart' show AdressWidget;
 export '/my_ongoing_orders/my_ongoing_orders_widget.dart'
     show MyOngoingOrdersWidget;
