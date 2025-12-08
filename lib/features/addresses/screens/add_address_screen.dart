@@ -14,9 +14,11 @@ class AddAddressScreen extends ConsumerStatefulWidget {
   const AddAddressScreen({
     super.key,
     required this.addressType,
+    this.existingAddress, // Optional: for edit mode
   });
 
   final AddressType addressType;
+  final AddressModel? existingAddress; // If provided, screen is in edit mode
 
   static String routeName = 'AddAddressScreen';
   static String routePath = '/addAddress';
@@ -43,6 +45,26 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
   bool _isDefault = false;
   bool _isSaving = false;
   bool _isLoadingLocation = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // If editing existing address, populate form fields
+    if (widget.existingAddress != null) {
+      final address = widget.existingAddress!;
+      _streetController.text = address.streetAddress;
+      _cityController.text = address.city;
+      _stateController.text = address.state;
+      _zipCodeController.text = address.zipCode;
+      _buildingController.text = address.building ?? '';
+      _floorController.text = address.floor ?? '';
+      _doorNumberController.text = address.doorNumber ?? '';
+      _labelController.text = address.label ?? '';
+      _latitude = address.latitude;
+      _longitude = address.longitude;
+      _isDefault = address.isDefault;
+    }
+  }
 
   @override
   void dispose() {
@@ -139,21 +161,37 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
       longitude: _longitude,
     );
 
-    final result = await ref.read(addressListProvider.notifier).createAddress(request);
+    // Check if we're in edit mode (updating) or create mode
+    final isEditMode = widget.existingAddress != null;
+    final dynamic result;
+
+    if (isEditMode) {
+      // Update existing address
+      result = await ref
+          .read(addressListProvider.notifier)
+          .updateAddress(widget.existingAddress!.id, request);
+    } else {
+      // Create new address
+      result = await ref.read(addressListProvider.notifier).createAddress(request);
+    }
 
     setState(() => _isSaving = false);
 
     if (result != null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Address added successfully')),
+          SnackBar(
+            content: Text(isEditMode ? 'Address updated successfully' : 'Address added successfully'),
+          ),
         );
         Navigator.of(context).pop(true);
       }
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to add address')),
+          SnackBar(
+            content: Text(isEditMode ? 'Failed to update address' : 'Failed to add address'),
+          ),
         );
       }
     }
@@ -179,7 +217,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            'Address Details',
+            widget.existingAddress != null ? 'Update Address' : 'Add Address',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
                   font: GoogleFonts.merriweather(
                     fontWeight: FontWeight.w600,
@@ -476,7 +514,9 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
                   const SizedBox(height: 32.0),
                   FFButtonWidget(
                     onPressed: _isSaving ? null : _saveAddress,
-                    text: _isSaving ? 'Saving...' : 'Save Address',
+                    text: _isSaving
+                        ? (widget.existingAddress != null ? 'Updating...' : 'Saving...')
+                        : (widget.existingAddress != null ? 'Update Address' : 'Save Address'),
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 56.0,

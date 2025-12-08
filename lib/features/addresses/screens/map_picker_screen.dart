@@ -28,9 +28,38 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedLocation = widget.initialLocation ??
-        const LatLng(37.7749, -122.4194); // Default to San Francisco
-    _loadAddress(_selectedLocation!);
+    _initializeLocation();
+  }
+
+  Future<void> _initializeLocation() async {
+    if (widget.initialLocation != null) {
+      // Use provided initial location
+      _selectedLocation = widget.initialLocation;
+      _loadAddress(_selectedLocation!);
+    } else {
+      // Get user's current location
+      try {
+        final locationData = await _locationService.getCurrentLocation();
+        if (locationData != null) {
+          setState(() {
+            _selectedLocation = LatLng(locationData.latitude, locationData.longitude);
+            _address = locationData.fullAddress;
+          });
+          // Move camera to current location
+          _mapController?.animateCamera(
+            CameraUpdate.newLatLngZoom(_selectedLocation!, 15),
+          );
+        } else {
+          // Fallback to default location if GPS fails
+          _selectedLocation = const LatLng(37.7749, -122.4194);
+          _loadAddress(_selectedLocation!);
+        }
+      } catch (e) {
+        // Fallback to default location on error
+        _selectedLocation = const LatLng(37.7749, -122.4194);
+        _loadAddress(_selectedLocation!);
+      }
+    }
   }
 
   Future<void> _loadAddress(LatLng location) async {

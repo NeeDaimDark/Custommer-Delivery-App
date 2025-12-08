@@ -32,15 +32,37 @@ class _AddressesWrapperScreenState extends ConsumerState<AddressesWrapperScreen>
   }
 
   Future<void> _navigateToAddAddress(AddressType type) async {
+    // For Home, Office, Apartment: Check if address already exists
+    // If exists, navigate to edit mode. If not, navigate to create mode.
+    // For Other: Always create new (never edit)
+
+    AddressModel? existingAddress;
+
+    if (type != AddressType.other) {
+      // Find existing address of this type
+      final addressState = ref.read(addressListProvider);
+      try {
+        existingAddress = addressState.addresses.firstWhere(
+          (addr) => addr.type == type,
+        );
+      } catch (e) {
+        // No existing address of this type
+        existingAddress = null;
+      }
+    }
+
     final result = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (context) => AddAddressScreen(addressType: type),
+        builder: (context) => AddAddressScreen(
+          addressType: type,
+          existingAddress: existingAddress, // Pass existing address for edit mode
+        ),
       ),
     );
 
     if (result == true) {
-      // Reload addresses after adding
+      // Reload addresses after adding/updating
       ref.read(addressListProvider.notifier).loadAddresses();
     }
   }
