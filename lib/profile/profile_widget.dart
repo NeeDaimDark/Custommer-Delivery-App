@@ -293,8 +293,7 @@ class _ProfileWidgetState extends ConsumerState<ProfileWidget> {
                                 hoverColor: Colors.transparent,
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
-                                  context
-                                      .pushNamed(ChangeAdressWidget.routeName);
+                                  context.pushNamed('AddressesWrapper');
                                 },
                                 child: Material(
                                   color: Colors.transparent,

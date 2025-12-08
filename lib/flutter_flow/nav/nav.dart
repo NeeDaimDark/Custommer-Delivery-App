@@ -91,11 +91,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => const EditProfileWidget(),
         ),
         FFRoute(
-          name: AdressSearchWidget.routeName,
-          path: AdressSearchWidget.routePath,
-          builder: (context, params) => const AdressSearchWidget(),
-        ),
-        FFRoute(
           name: NotificationsWidget.routeName,
           path: NotificationsWidget.routePath,
           builder: (context, params) => const NotificationsWidget(),
@@ -109,11 +104,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: MenuBeveragesWidget.routeName,
           path: MenuBeveragesWidget.routePath,
           builder: (context, params) => const MenuBeveragesWidget(),
-        ),
-        FFRoute(
-          name: AdressOtherWidget.routeName,
-          path: AdressOtherWidget.routePath,
-          builder: (context, params) => const AdressOtherWidget(),
         ),
         FFRoute(
           name: OffersWidget.routeName,
@@ -141,11 +131,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => const HomePageWidget(),
         ),
         FFRoute(
-          name: AdressApartmentWidget.routeName,
-          path: AdressApartmentWidget.routePath,
-          builder: (context, params) => const AdressApartmentWidget(),
-        ),
-        FFRoute(
           name: RestaurantViewWidget.routeName,
           path: RestaurantViewWidget.routePath,
           builder: (context, params) => const RestaurantViewWidget(),
@@ -154,11 +139,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: OrderArrivalWidget.routeName,
           path: OrderArrivalWidget.routePath,
           builder: (context, params) => const OrderArrivalWidget(),
-        ),
-        FFRoute(
-          name: AdressOfficeWidget.routeName,
-          path: AdressOfficeWidget.routePath,
-          builder: (context, params) => const AdressOfficeWidget(),
         ),
         FFRoute(
           name: EnjoyWidget.routeName,
@@ -174,11 +154,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: PaymentMethodWidget.routeName,
           path: PaymentMethodWidget.routePath,
           builder: (context, params) => const PaymentMethodWidget(),
-        ),
-        FFRoute(
-          name: AdressHomeWidget.routeName,
-          path: AdressHomeWidget.routePath,
-          builder: (context, params) => const AdressHomeWidget(),
         ),
         FFRoute(
           name: CheckoutWidget.routeName,
@@ -201,14 +176,9 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => const MessagesWidget(),
         ),
         FFRoute(
-          name: ChangeAdressWidget.routeName,
-          path: ChangeAdressWidget.routePath,
+          name: 'AddressesWrapper',
+          path: '/addressesWrapper',
           builder: (context, params) => const AddressesWrapperScreen(),
-        ),
-        FFRoute(
-          name: AdressWidget.routeName,
-          path: AdressWidget.routePath,
-          builder: (context, params) => const AdressWidget(),
         ),
         FFRoute(
           name: MyOngoingOrdersWidget.routeName,
@@ -219,11 +189,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: MyOrdersHistoryWidget.routeName,
           path: MyOrdersHistoryWidget.routePath,
           builder: (context, params) => const MyOrdersHistoryWidget(),
-        ),
-        FFRoute(
-          name: AdressTypeWidget.routeName,
-          path: AdressTypeWidget.routePath,
-          builder: (context, params) => const AdressTypeWidget(),
         ),
         FFRoute(
           name: CategoriesPageWidget.routeName,
@@ -259,46 +224,6 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: MenuFoodWidget.routeName,
           path: MenuFoodWidget.routePath,
           builder: (context, params) => const MenuFoodWidget(),
-        ),
-        FFRoute(
-          name: AdressApartmentCADWidget.routeName,
-          path: AdressApartmentCADWidget.routePath,
-          builder: (context, params) => const AdressApartmentCADWidget(),
-        ),
-        FFRoute(
-          name: AdressApartmentCADSWidget.routeName,
-          path: AdressApartmentCADSWidget.routePath,
-          builder: (context, params) => const AdressApartmentCADSWidget(),
-        ),
-        FFRoute(
-          name: AdressHomeCADSWidget.routeName,
-          path: AdressHomeCADSWidget.routePath,
-          builder: (context, params) => const AdressHomeCADSWidget(),
-        ),
-        FFRoute(
-          name: AdressHomeCADWidget.routeName,
-          path: AdressHomeCADWidget.routePath,
-          builder: (context, params) => const AdressHomeCADWidget(),
-        ),
-        FFRoute(
-          name: AdressOfficeCADWidget.routeName,
-          path: AdressOfficeCADWidget.routePath,
-          builder: (context, params) => const AdressOfficeCADWidget(),
-        ),
-        FFRoute(
-          name: AdressOfficeCADSWidget.routeName,
-          path: AdressOfficeCADSWidget.routePath,
-          builder: (context, params) => const AdressOfficeCADSWidget(),
-        ),
-        FFRoute(
-          name: AdressOtherCADWidget.routeName,
-          path: AdressOtherCADWidget.routePath,
-          builder: (context, params) => const AdressOtherCADWidget(),
-        ),
-        FFRoute(
-          name: AdressOtherCADSWidget.routeName,
-          path: AdressOtherCADSWidget.routePath,
-          builder: (context, params) => const AdressOtherCADSWidget(),
         ),
         FFRoute(
           name: LanguageWidget.routeName,
